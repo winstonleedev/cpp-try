@@ -9,7 +9,7 @@
 #include <optional>
 #include <functional>
 
-template <typename T>
+template<typename T>
 class Try {
     bool isError;
     std::string errorMessage;
@@ -17,16 +17,26 @@ class Try {
 
 public:
     explicit Try(T);
-    explicit Try(const std::exception&);
+
+    // What if we want the result to be a string?
+    // explicit Try(const std::string&);
+
+    explicit Try(const std::exception &);
+
     explicit Try(std::optional<T>);
     // TODO make this monster
     // explicit Try(std::function<T>);
 
     bool isFailure();
+
     bool isSuccess();
+
     std::optional<T> get();
+
     T getOrElse(T other);
+
     std::optional<T> toOption();
+
     std::string getErrorMessage();
 };
 
@@ -38,7 +48,7 @@ Try<T>::Try(std::optional<T> value) {
 }
 
 template<typename T>
-Try<T>::Try(const std::exception& exception) {
+Try<T>::Try(const std::exception &exception) {
     result = std::nullopt;
     errorMessage = exception.what();
     isError = true;
@@ -85,6 +95,13 @@ Try<T>::Try(T t) {
     result = std::make_optional(t);
     isError = false;
 }
+
+//template<typename T>
+//Try<T>::Try(const std::string &message) {
+//    isError = true;
+//    errorMessage = message;
+//    result = std::nullopt;
+//}
 
 
 #endif //CPP_TRY_TRY_H

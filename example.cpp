@@ -4,35 +4,52 @@
 
 using namespace std;
 
+// Catch external exceptions
+
 double division(int a, int b) {
-    if( b == 0 ) {
-        throw std::runtime_error("Division by zero condition!");
+    if (b == 0) {
+        throw runtime_error("Division by zero condition!");
     }
     return 1.0f * a / b;
 }
 
 Try<double> wrappedDivision(int a, int b) {
     try {
-        return Try{ division(a, b) };
-    } catch (std::exception& e) {
+        return Try{division(a, b)};
+    } catch (exception &e) {
         return Try<double>{e};
     }
 }
 
-void displayResult(int order, Try<double> result) {
+// Handling our own errors
+
+Try<double> safeDivision(int a, int b) {
+    if (b == 0) {
+        return Try<double>(std::runtime_error("Division by zero condition!"));
+    }
+    return Try<double>(1.0f * a / b);
+}
+
+void displayResult(const string &desc, Try<double> result) {
+    cout << "Division result for " << desc << " : ";
     if (result.isSuccess()) {
-        std::cout << "Division result " << order << " is " << result.get().value() << std::endl;
+        cout << result.get().value() << endl;
     } else {
-        std::cout << "Division result " << order << " error " << result.getErrorMessage() << std::endl;
+        cout << " error " << result.getErrorMessage() << endl;
     }
 }
 
 int main() {
-    auto result = wrappedDivision(3,2);
-    displayResult(1, result);
+    auto result = wrappedDivision(3, 2);
+    displayResult("not our code, normal case", result);
 
-    result = wrappedDivision(3,0);
-    displayResult(2, result);
+    result = wrappedDivision(3, 0);
+    displayResult("not our code, exception case", result);
 
+    result = safeDivision(3, 2);
+    displayResult("our code, normal case", result);
+
+    result = safeDivision(3, 0);
+    displayResult("our code, exception case", result);
     return 0;
 }
