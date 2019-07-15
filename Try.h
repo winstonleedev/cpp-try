@@ -11,7 +11,8 @@
 
 template <typename T>
 class Try {
-    std::exception* error;
+    bool isError;
+    std::string errorMessage;
     std::optional<T> result;
 
 public:
@@ -26,25 +27,26 @@ public:
     std::optional<T> get();
     T getOrElse(T other);
     std::optional<T> toOption();
-    std::optional<std::exception> getError();
+    std::string getErrorMessage();
 };
 
 
 template<typename T>
 Try<T>::Try(std::optional<T> value) {
     result = value;
-    error = nullptr;
+    isError = false;
 }
 
 template<typename T>
 Try<T>::Try(const std::exception& exception) {
     result = std::nullopt;
-    error = *exception;
+    errorMessage = exception.what();
+    isError = true;
 }
 
 template<typename T>
 bool Try<T>::isFailure() {
-    return error != nullptr;
+    return isError;
 }
 
 template<typename T>
@@ -62,10 +64,7 @@ T Try<T>::getOrElse(T other) {
     if (isFailure()) {
         return other;
     }
-    if (result == std::nullopt) {
-        return other;
-    }
-    return result.value();
+    return result.value_or(other);
 }
 
 template<typename T>
@@ -74,16 +73,17 @@ std::optional<T> Try<T>::toOption() {
 }
 
 template<typename T>
-std::optional<std::exception> Try<T>::getError() {
-    if (error == nullptr) {
-        return std::nullopt;
+std::string Try<T>::getErrorMessage() {
+    if (isSuccess()) {
+        return "";
     }
-    return std::make_optional(*error);
+    return errorMessage;
 }
 
 template<typename T>
 Try<T>::Try(T t) {
-    Try(std::make_optional(t));
+    result = std::make_optional(t);
+    isError = false;
 }
 
 

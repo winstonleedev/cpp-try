@@ -6,9 +6,9 @@ using namespace std;
 
 double division(int a, int b) {
     if( b == 0 ) {
-        throw "Division by zero condition!";
+        throw std::runtime_error("Division by zero condition!");
     }
-    return a / b;
+    return 1.0f * a / b;
 }
 
 Try<double> wrappedDivision(int a, int b) {
@@ -19,11 +19,20 @@ Try<double> wrappedDivision(int a, int b) {
     }
 }
 
+void displayResult(int order, Try<double> result) {
+    if (result.isSuccess()) {
+        std::cout << "Division result " << order << " is " << result.get().value() << std::endl;
+    } else {
+        std::cout << "Division result " << order << " error " << result.getErrorMessage() << std::endl;
+    }
+}
+
 int main() {
-    std::cout << "Division result 1 is " << wrappedDivision(3,2).getOrElse(0) << std::endl;
-    std::cout << "Division result 1 is " << wrappedDivision(3,2).get().value() << std::endl;
-    std::cout << "Division result 2 is " << wrappedDivision(3,0).get().value() << std::endl;
-    std::cout << "Division error  2 is " << wrappedDivision(3,0).getError().value().what() << std::endl;
+    auto result = wrappedDivision(3,2);
+    displayResult(1, result);
+
+    result = wrappedDivision(3,0);
+    displayResult(2, result);
 
     return 0;
 }
