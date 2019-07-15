@@ -13,7 +13,7 @@ double division(int a, int b) {
     return 1.0f * a / b;
 }
 
-Try<double> wrappedDivision(int a, int b) {
+auto wrappedDivision(int a, int b) {
     try {
         return Try{division(a, b)};
     } catch (exception &e) {
@@ -23,7 +23,7 @@ Try<double> wrappedDivision(int a, int b) {
 
 // Handling our own errors
 
-Try<double> safeDivision(int a, int b) {
+auto safeDivision(int a, int b) {
     if (b == 0) {
         return Try<double>(std::runtime_error("Division by zero condition!"));
     }
