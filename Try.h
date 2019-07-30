@@ -2,8 +2,7 @@
 // Created by Thanh Phu on 7/12/2019.
 //
 
-#ifndef CPP_TRY_TRY_H
-#define CPP_TRY_TRY_H
+#pragma once
 
 #include <exception>
 #include <optional>
@@ -24,6 +23,7 @@ public:
     explicit Try(const std::exception &);
 
     explicit Try(std::optional<T>);
+
     // TODO make this monster
     // explicit Try(std::function<T>);
 
@@ -102,6 +102,3 @@ Try<T>::Try(T t) {
 //    errorMessage = message;
 //    result = std::nullopt;
 //}
-
-
-#endif //CPP_TRY_TRY_H
